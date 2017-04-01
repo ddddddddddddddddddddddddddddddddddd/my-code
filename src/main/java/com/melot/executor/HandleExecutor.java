@@ -28,10 +28,10 @@ public class HandleExecutor extends Thread implements Executor {
     public void run() {
         while (true) {
             try {
-                int roomId = queue.take();
+                final int roomId = queue.take();
                 Set<Integer> idSet = userMap.keySet();
-                for (Integer id : idSet) {
-                    String token = userMap.get(id);
+                for (final Integer id : idSet) {
+                    final String token = userMap.get(id);
                     Set<String> set = ReapExecutor.getUserByRoomId(roomId);
                     if (set == null || !set.contains(id + "_" + token)) {
                     	roomPool.submit(new Runnable() {

@@ -33,11 +33,11 @@ public class ReapExecutor extends Thread implements Executor {
                 String data = queue.take();
                 uniqueSendIdSet.remove(data);
                 String[] room = data.split("_");
-                int roomId = Integer.valueOf(room[0]);
-                String sendId = room[1];
+                final int roomId = Integer.valueOf(room[0]);
+                final String sendId = room[1];
                 Set<String> list = userMap.get(roomId);
                 if (list == null) continue;
-                for (String user : list) {
+                for (final String user : list) {
                 	getRedPool.submit(new Runnable() {
 						@Override
 						public void run() {
@@ -61,7 +61,7 @@ public class ReapExecutor extends Thread implements Executor {
     }
 
     public static void putData(String data) {
-		if (uniqueSendIdSet.putIfAbsent(data, null) == null){
+		if (uniqueSendIdSet.putIfAbsent(data, "") == null){
 			queue.add(data);
 		}
     }
