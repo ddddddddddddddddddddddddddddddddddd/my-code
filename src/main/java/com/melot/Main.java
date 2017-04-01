@@ -32,8 +32,8 @@ public class Main {
         handleExecutor.execute();
         ReapExecutor reapExecutor = new ReapExecutor();
         reapExecutor.execute();
-//        CloseSessionExecutor closeSessionExecutor = new CloseSessionExecutor();
-//        closeSessionExecutor.execute();
+        CloseSessionExecutor closeSessionExecutor = new CloseSessionExecutor();
+        closeSessionExecutor.execute();
 
         File file = new File(Main.class.getResource("/").getPath() + "user.conf");
         System.out.println(Main.class.getResource("/").getPath() + "user.conf");

@@ -1,16 +1,16 @@
 package com.melot.executor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.Session;
 
 public class CloseSessionExecutor extends Thread implements Executor{
 
-	private static Map<Long,List<Object>> sessionMap = new HashMap<Long,List<Object>>();
+	private static Map<Long,List<Object>> sessionMap = new ConcurrentHashMap<Long,List<Object>>();
 	
 	@Override
 	public void execute() {

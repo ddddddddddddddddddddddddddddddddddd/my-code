@@ -1,10 +1,10 @@
 package com.melot.executor;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -15,7 +15,7 @@ public class ReapExecutor extends Thread implements Executor {
 
     private static BlockingQueue<String> queue = new LinkedBlockingQueue<String>();
 
-    private static Map<Integer, Set<String>> userMap = new HashMap<Integer, Set<String>>();
+    private static Map<Integer, Set<String>> userMap = new ConcurrentHashMap<Integer, Set<String>>();
 
     private static Set<String> uniqueSendIdSet = new HashSet<>();
     
