@@ -34,6 +34,12 @@ public class CloseSessionExecutor extends Thread implements Executor{
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			try {
+				Thread.sleep(60 * 1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
