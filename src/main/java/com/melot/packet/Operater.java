@@ -17,7 +17,7 @@ import com.melot.util.EncryptUtil;
 public class Operater {
 
     private static JsonParser parser = new JsonParser();
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static String login(int userId, String up) throws Exception {
         String url = "https://sapi.kktv1.com/meShow/entrance";
@@ -116,7 +116,7 @@ public class Operater {
         }
 
         System.out.println(amount + " " + sendId + " " +
-                roomId + " " + sdf.format(new Date(Long.parseLong(json.get("dtime").toString()))) + " " + userId);
+                roomId + " " + sdf.format(new Date(System.currentTimeMillis())) + " " + userId);
 //		StatisticsExecutor.putData(json);
 
         in.close();

@@ -31,12 +31,7 @@ public class SocketClient extends Thread {
 	@OnMessage
 	public void onMessage(String message) throws Exception {
 		try {
-			if (message.contains("sendId")) {
-				JsonObject json = (JsonObject)parser.parse(message);
-				String sendId = json.get("sendId").getAsString();
-				String roomId = json.get("roomId").getAsString();
-				ReapExecutor.putData(roomId + "_" + sendId);
-			}else if(message.contains("红包")){
+			if(message.contains("红包")){
 				JsonObject json = (JsonObject)parser.parse(message);
 				JsonArray array = json.get("MsgList").getAsJsonArray();
 				JsonObject obj = (JsonObject)array.get(0);
