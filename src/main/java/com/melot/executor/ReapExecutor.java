@@ -1,7 +1,6 @@
 package com.melot.executor;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +14,7 @@ public class ReapExecutor extends Thread implements Executor {
 
     private static BlockingQueue<String> queue = new LinkedBlockingQueue<String>();
 
-    private static Map<Integer, Set<String>> userMap = new ConcurrentHashMap<Integer, Set<String>>();
+    private static ConcurrentHashMap<Integer, Set<String>> userMap = new ConcurrentHashMap<Integer, Set<String>>();
 
     private static ConcurrentHashMap<String,Object> uniqueSendIdSet = new ConcurrentHashMap<String,Object>();
 //    private static ConcurrentSkipListSet<String> uniqueSendIdSet = new ConcurrentSkipListSet<String>();
