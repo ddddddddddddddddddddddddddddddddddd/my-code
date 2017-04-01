@@ -31,7 +31,7 @@ public class ReapExecutor extends Thread implements Executor {
         while (true) {
             try {
                 String data = queue.take();
-                uniqueSendIdSet.remove(data);
+//                uniqueSendIdSet.remove(data);
                 String[] room = data.split("_");
                 final int roomId = Integer.valueOf(room[0]);
                 final String sendId = room[1];
