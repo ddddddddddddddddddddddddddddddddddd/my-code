@@ -14,6 +14,7 @@ import javax.websocket.WebSocketContainer;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.melot.executor.CloseSessionExecutor;
 import com.melot.executor.ReapExecutor;
 
 @ClientEndpoint
@@ -59,6 +60,7 @@ public class SocketClientSlave {
         msg.addProperty("userId", userId);
         msg.addProperty("token", token);
         session.getBasicRemote().sendText(msg.toString());
+        CloseSessionExecutor.putSession(System.currentTimeMillis() + 60000, roomId, session);
     }
 
 }

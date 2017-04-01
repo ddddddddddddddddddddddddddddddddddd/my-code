@@ -8,25 +8,23 @@
  */
 package com.melot;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Random;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.melot.executor.CloseSessionExecutor;
 import com.melot.executor.HandleExecutor;
 import com.melot.executor.ReapExecutor;
 import com.melot.packet.Operater;
 import com.melot.packet.SocketClient;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 public class Main {
 
     private static JsonParser parser = new JsonParser();
-    private static List<JsonObject> user = new ArrayList<JsonObject>();
 
     public static void main(String[] args) throws Exception {
 
@@ -34,6 +32,8 @@ public class Main {
         handleExecutor.execute();
         ReapExecutor reapExecutor = new ReapExecutor();
         reapExecutor.execute();
+        CloseSessionExecutor closeSessionExecutor = new CloseSessionExecutor();
+        closeSessionExecutor.execute();
 
         File file = new File(Main.class.getResource("/").getPath() + "user.conf");
         System.out.println(Main.class.getResource("/").getPath() + "user.conf");

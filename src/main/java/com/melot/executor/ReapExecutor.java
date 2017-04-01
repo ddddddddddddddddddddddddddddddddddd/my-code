@@ -5,9 +5,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.google.gson.JsonObject;
 import com.melot.packet.Operater;
 
 public class ReapExecutor extends Thread implements Executor {
@@ -17,6 +18,8 @@ public class ReapExecutor extends Thread implements Executor {
     private static Map<Integer, Set<String>> userMap = new HashMap<Integer, Set<String>>();
 
     private static Set<String> uniqueSendIdSet = new HashSet<>();
+    
+    ExecutorService getRedPool = Executors.newFixedThreadPool(20);
 
     @Override
     public void execute() {
@@ -28,16 +31,28 @@ public class ReapExecutor extends Thread implements Executor {
         while (true) {
             try {
                 String data = queue.take();
+                uniqueSendIdSet.remove(data);
                 String[] room = data.split("_");
                 int roomId = Integer.valueOf(room[0]);
                 String sendId = room[1];
                 Set<String> list = userMap.get(roomId);
                 if (list == null) continue;
                 for (String user : list) {
-                    String[] usr = user.split("_");
-                    int userId = Integer.valueOf(usr[0]);
-                    String token = usr[1];
-                    Operater.getRed(userId, token, sendId, roomId);
+                	getRedPool.submit(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								String[] usr = user.split("_");
+								int userId = Integer.valueOf(usr[0]);
+								String token = usr[1];
+								Operater.getRed(userId, token, sendId, roomId);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+                	
+                    
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -61,5 +76,10 @@ public class ReapExecutor extends Thread implements Executor {
 
     public static Set<String> getUserByRoomId(int roomId) {
         return userMap.get(roomId);
+    }
+    
+    public static void removeUserByRoomId(Integer roomId){
+    	if(userMap.containsKey(roomId))
+    		userMap.remove(roomId);
     }
 }

@@ -12,7 +12,6 @@ import java.util.Map;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.melot.executor.StatisticsExecutor;
 import com.melot.util.EncryptUtil;
 
 public class Operater {
