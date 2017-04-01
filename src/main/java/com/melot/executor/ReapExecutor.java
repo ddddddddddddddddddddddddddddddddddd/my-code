@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -17,7 +18,7 @@ public class ReapExecutor extends Thread implements Executor {
 
     private static Map<Integer, Set<String>> userMap = new ConcurrentHashMap<Integer, Set<String>>();
 
-    private static Set<String> uniqueSendIdSet = new HashSet<>();
+    private static Set<String> uniqueSendIdSet = new ConcurrentSkipListSet<String>();
     
     ExecutorService getRedPool = Executors.newFixedThreadPool(20);
 
