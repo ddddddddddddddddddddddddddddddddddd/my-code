@@ -60,7 +60,7 @@ public class Main {
             public void run() {
                 try {
                     int userId = 122831357;
-                    int roomId = 79853182;
+                    int roomId = 117366944;
                     String up = "8I1J1D1212111K1D1K1I1ZPM8E1JYUJ3JYJZ1D121K7E";
                     // 获取房间socket
                     String ws = Operater.getWsByRoomId(roomId);
