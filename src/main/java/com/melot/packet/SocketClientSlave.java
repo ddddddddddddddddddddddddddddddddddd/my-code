@@ -60,7 +60,7 @@ public class SocketClientSlave {
         msg.addProperty("userId", userId);
         msg.addProperty("token", token);
         session.getBasicRemote().sendText(msg.toString());
-        CloseSessionExecutor.putSession(System.currentTimeMillis() + 3 * 60 * 1000, roomId, session);
+        CloseSessionExecutor.putSession(userId, roomId, System.currentTimeMillis() + 3 * 60 * 1000, session);
     }
 
 }
