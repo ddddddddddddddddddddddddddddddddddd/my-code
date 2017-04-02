@@ -59,5 +59,9 @@ public class HandleExecutor extends Thread implements Executor {
     public static void putRoomid(int roomId) {
         queue.add(roomId);
     }
+    
+    public static Map<Integer, String> getUserMap(){
+    	return userMap;
+    }
 
 }

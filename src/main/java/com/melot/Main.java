@@ -19,6 +19,7 @@ import com.google.gson.JsonParser;
 import com.melot.executor.CloseSessionExecutor;
 import com.melot.executor.HandleExecutor;
 import com.melot.executor.ReapExecutor;
+import com.melot.executor.UserResidualExecutor;
 import com.melot.packet.Operater;
 import com.melot.packet.SocketClient;
 
@@ -34,6 +35,8 @@ public class Main {
         reapExecutor.execute();
         CloseSessionExecutor closeSessionExecutor = new CloseSessionExecutor();
         closeSessionExecutor.execute();
+        UserResidualExecutor userResidualExecutor = new UserResidualExecutor();
+        userResidualExecutor.execute();
 
         File file = new File(Main.class.getResource("/").getPath() + "user.conf");
         System.out.println(Main.class.getResource("/").getPath() + "user.conf");

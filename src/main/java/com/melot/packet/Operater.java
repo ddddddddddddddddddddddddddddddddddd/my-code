@@ -151,4 +151,47 @@ public class Operater {
         }
         return ws;
     }
+    
+    public static int getUserInfo(int userId, String token){
+    	int amount = 0;
+    	try {
+    		String url = "https://sapi.kktv1.com/meShow/entrance";
+    		JsonObject data = new JsonObject();
+    		data.addProperty("FuncTag", 10005001);
+    		data.addProperty("userId", userId);
+    		data.addProperty("token", token);
+    		data.addProperty("platform", 1);
+    		data.addProperty("a", 2);
+    		data.addProperty("c", 100101);
+    		
+    		String para = URLEncoder.encode(data.toString(), "UTF-8");
+    		url = url + "?parameter=" + para;
+    		URL U = new URL(url);
+    		HttpURLConnection httpConn = (HttpURLConnection) U.openConnection();
+    		httpConn.setDoOutput(true);// 使用 URL 连接进行输出
+    		httpConn.setDoInput(true);// 使用 URL 连接进行输入
+    		httpConn.setUseCaches(false);// 忽略缓存
+    		httpConn.setRequestMethod("GET");// 设置URL请求方法
+    		// 设置请求属性
+    		httpConn.setRequestProperty("Content-Type", "application/octet-stream");
+    		httpConn.setRequestProperty("Connection", "Keep-Alive");// 维持长连接
+    		httpConn.setRequestProperty("Charset", "UTF-8");
+    		httpConn.connect();
+    		
+    		BufferedReader in = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
+    		String line;
+    		String result = "";
+    		while ((line = in.readLine()) != null) {
+    			result += line;
+    		}
+    		JsonObject json = (JsonObject) parser.parse(result);
+    		
+    		if(json.get("money") != null){
+    			amount = json.get("money").getAsInt();
+    		}
+		} catch (Exception e) {
+			
+		}
+    	return amount;
+    }
 }
