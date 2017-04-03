@@ -1,35 +1,27 @@
-package com.red.executor;
+package com.red.thread;
 
-import com.red.constant.UserRoomConstants;
-import com.red.packet.Operater;
-import com.red.packet.SocketClientSlave;
+import com.red.client.SocketClientSlave;
+import com.red.util.DataUtil;
+import com.red.util.OperUtil;
+import com.red.util.PoolUtil;
 
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public class LoginRoomExecutor extends Thread implements Executor {
+public class LoginRoomThread extends Thread {
 
-    private static ExecutorService roomPool = Executors.newFixedThreadPool(20);
-
-    @Override
-    public void execute() {
-        this.start();
-
-    }
 
     public void run() {
         while (true) {
             try {
-                final String roomId = UserRoomConstants.ROOM_QUEUE.take();
-                Set<String> idSet = UserRoomConstants.UESER_TOKEN.keySet();
+                final String roomId = DataUtil.ROOM_QUEUE.take();
+                Set<String> idSet = DataUtil.UESER_TOKEN.keySet();
                 for (final String id : idSet) {
-                    final String token = UserRoomConstants.UESER_TOKEN.get(id);
-                    roomPool.submit(new Runnable() {
+                    final String token = DataUtil.UESER_TOKEN.get(id);
+                    PoolUtil.ROOM_THREAD_POOL.execute(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                String ws = Operater.getWsByRoomId(roomId);
+                                String ws = OperUtil.getWsByRoomId(roomId);
                                 SocketClientSlave.connect(id, roomId, token, ws);
                             } catch (Exception e) {
                                 e.printStackTrace();

@@ -2,24 +2,22 @@ package com.red.thread;
 
 import com.red.util.DataUtil;
 
-import javax.websocket.Session;
-import java.util.List;
 import java.util.Set;
 
-public class CloseSessionThread extends Thread {
+/**
+ * Created by Admin on 2017/4/3.
+ */
+public class ClearRedFilterThread extends Thread {
 
     public void run() {
         while (true) {
             try {
-                Set<String> keys = DataUtil.sessionMap.keySet();
+                Set<String> keys = DataUtil.RED_FILTER.keySet();
                 Long now = System.currentTimeMillis();
                 for (String key : keys) {
-                    List<Object> list = DataUtil.sessionMap.get(key);
-                    Long time = (Long) list.get(0);
-                    if (time.longValue() <= now.longValue()) {
-                        DataUtil.sessionMap.remove(key);
-                        Session session = (Session) list.get(1);
-                        session.close();
+                    long time = DataUtil.RED_FILTER.get(key);
+                    if (time <= now.longValue()) {
+                        DataUtil.RED_FILTER.remove(key);
                     }
                 }
             } catch (Exception e) {

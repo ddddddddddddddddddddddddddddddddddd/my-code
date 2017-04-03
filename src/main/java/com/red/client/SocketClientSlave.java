@@ -1,21 +1,15 @@
-package com.red.packet;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Set;
-
-import javax.websocket.ClientEndpoint;
-import javax.websocket.ContainerProvider;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
+package com.red.client;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.red.thread.CloseSessionThread;
+import com.red.util.DataUtil;
+import com.red.util.OperUtil;
+import com.red.util.PoolUtil;
+
+import javax.websocket.*;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Set;
 
 @ClientEndpoint
 public class SocketClientSlave {
@@ -34,17 +28,17 @@ public class SocketClientSlave {
             final String sendId = json.get("sendId").getAsString();
             final String roomId = json.get("roomId").getAsString();
 
-            if (UserRoomConstants.RED_FILTER.putIfAbsent(roomId + "_" + sendId, System.currentTimeMillis() * 2 * 60000) != null) {
+            if (DataUtil.RED_FILTER.putIfAbsent(roomId + "_" + sendId, System.currentTimeMillis() * 2 * 60000) != null) {
                 return;
             }
-            Set<String> userIdSet = UserRoomConstants.UESER_TOKEN_MAP.keySet();
+            Set<String> userIdSet = DataUtil.UESER_TOKEN.keySet();
             for (final String userId : userIdSet) {
-                final String token = UserRoomConstants.UESER_TOKEN_MAP.get(userId);
-                ReapExecutor.getRedPool.submit(new Runnable() {
+                final String token = DataUtil.UESER_TOKEN.get(userId);
+                PoolUtil.RED_THREAD_POOL.execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            Operater.getRed(userId, token, sendId, roomId);
+                            OperUtil.getRed(userId, token, sendId, roomId);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -77,7 +71,7 @@ public class SocketClientSlave {
         msg.addProperty("userId", userId);
         msg.addProperty("token", token);
         session.getBasicRemote().sendText(msg.toString());
-        CloseSessionThread.putSession(userId, roomId, System.currentTimeMillis() + 3 * 60 * 1000, session);
+        DataUtil.putSession(userId, roomId, System.currentTimeMillis() + 3 * 60 * 1000, session);
     }
 
 }

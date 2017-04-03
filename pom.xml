@@ -52,7 +52,7 @@
                     <configuration>
                         <archive>
                             <manifest>
-                                <mainClass>com.melot.Main</mainClass>
+                                <mainClass>com.red.Main</mainClass>
                             </manifest>
                         </archive>
                     </configuration>

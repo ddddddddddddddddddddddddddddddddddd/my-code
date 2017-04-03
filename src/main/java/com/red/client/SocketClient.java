@@ -1,20 +1,13 @@
-package com.red.packet;
-
-import java.io.IOException;
-import java.net.URI;
-
-import javax.websocket.ClientEndpoint;
-import javax.websocket.ContainerProvider;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
+package com.red.client;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.red.util.DataUtil;
+
+import javax.websocket.*;
+import java.io.IOException;
+import java.net.URI;
 
 @ClientEndpoint
 public class SocketClient extends Thread {
@@ -34,7 +27,7 @@ public class SocketClient extends Thread {
                 JsonArray array = json.get("MsgList").getAsJsonArray();
                 JsonObject obj = (JsonObject) array.get(0);
                 String roomId = obj.get("roomId").getAsString();
-                UserRoomConstants.ROOM_QUEUE.add(roomId);
+                DataUtil.ROOM_QUEUE.add(roomId);
             }
         } catch (Exception e) {
             System.out.println("master error !");
