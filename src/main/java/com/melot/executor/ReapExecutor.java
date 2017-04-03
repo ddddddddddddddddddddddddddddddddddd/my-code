@@ -19,7 +19,7 @@ public class ReapExecutor extends Thread implements Executor {
     private static ConcurrentHashMap<String,Object> uniqueSendIdSet = new ConcurrentHashMap<String,Object>();
 //    private static ConcurrentSkipListSet<String> uniqueSendIdSet = new ConcurrentSkipListSet<String>();
     
-    ExecutorService getRedPool = Executors.newFixedThreadPool(20);
+    public static ExecutorService getRedPool = Executors.newFixedThreadPool(20);
 
     @Override
     public void execute() {

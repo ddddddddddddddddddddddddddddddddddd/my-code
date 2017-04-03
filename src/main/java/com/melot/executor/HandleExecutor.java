@@ -3,10 +3,7 @@ package com.melot.executor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 import com.melot.packet.Operater;
 import com.melot.packet.SocketClientSlave;
@@ -16,9 +13,10 @@ public class HandleExecutor extends Thread implements Executor {
     private static BlockingQueue<Integer> queue = new LinkedBlockingQueue<Integer>();
 
     public static Map<Integer, String> userMap = new HashMap<Integer, String>();
+    public static ConcurrentHashMap<String, String> filterRed = new ConcurrentHashMap<String, String>();
 
     ExecutorService roomPool = Executors.newFixedThreadPool(20);
-    
+
     @Override
     public void execute() {
         this.start();
@@ -34,18 +32,18 @@ public class HandleExecutor extends Thread implements Executor {
                     final String token = userMap.get(id);
                     Set<String> set = ReapExecutor.getUserByRoomId(roomId);
                     if (set == null || !set.contains(id + "_" + token)) {
-                    	roomPool.submit(new Runnable() {
-							@Override
-							public void run() {
-								try {
-									String ws = Operater.getWsByRoomId(roomId);
-									SocketClientSlave.connect(id, roomId, token, ws);
-									ReapExecutor.putUser(roomId, id + "_" + token);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-						});
+                        roomPool.submit(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    String ws = Operater.getWsByRoomId(roomId);
+                                    SocketClientSlave.connect(id, roomId, token, ws);
+                                    ReapExecutor.putUser(roomId, id + "_" + token);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
                     }
                 }
             } catch (InterruptedException e) {
@@ -59,9 +57,9 @@ public class HandleExecutor extends Thread implements Executor {
     public static void putRoomid(int roomId) {
         queue.add(roomId);
     }
-    
-    public static Map<Integer, String> getUserMap(){
-    	return userMap;
+
+    public static Map<Integer, String> getUserMap() {
+        return userMap;
     }
 
 }

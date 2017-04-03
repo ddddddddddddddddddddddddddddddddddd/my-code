@@ -2,6 +2,7 @@ package com.melot.packet;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Set;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.ContainerProvider;
@@ -15,6 +16,7 @@ import javax.websocket.WebSocketContainer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.melot.executor.CloseSessionExecutor;
+import com.melot.executor.HandleExecutor;
 import com.melot.executor.ReapExecutor;
 
 @ClientEndpoint
@@ -31,9 +33,29 @@ public class SocketClientSlave {
     public void onMessage(String message) throws Exception {
         if (message.contains("sendId")) {
             JsonObject json = (JsonObject) parser.parse(message);
-            String sendId = json.get("sendId").getAsString();
-            String roomId = json.get("roomId").getAsString();
-            ReapExecutor.putData(roomId + "_" + sendId);
+            final String sendId = json.get("sendId").getAsString();
+            final String roomId = json.get("roomId").getAsString();
+//            ReapExecutor.putData(roomId + "_" + sendId);
+
+
+            if (HandleExecutor.filterRed.putIfAbsent(roomId + "_" + sendId, "") != null) {
+                return;
+            }
+            Set<Integer> idSet = HandleExecutor.userMap.keySet();
+            for (final Integer id : idSet) {
+                final String token = HandleExecutor.userMap.get(id);
+
+                ReapExecutor.getRedPool.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Operater.getRed(id, token, sendId, Integer.parseInt(roomId));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
         }
     }
 
