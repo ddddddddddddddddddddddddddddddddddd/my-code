@@ -1,16 +1,15 @@
-package com.melot.executor;
+package com.red.executor;
 
+import com.red.constant.CommonConstants;
+
+import javax.websocket.Session;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.websocket.Session;
-
 public class CloseSessionExecutor extends Thread implements Executor {
 
-    private static final String strFormat = "%s_%s";
     private static ConcurrentHashMap<String, List<Object>> sessionMap = new ConcurrentHashMap<String, List<Object>>();
 
     @Override
@@ -46,11 +45,11 @@ public class CloseSessionExecutor extends Thread implements Executor {
         }
     }
 
-    public static void putSession(int userId, int roomId, Long time, Session session) {
+    public static void putSession(String userId, String roomId, Long time, Session session) {
         List<Object> list = new ArrayList<Object>(2);
         list.add(time);
         list.add(session);
         list.add(roomId);
-        sessionMap.put(String.format(strFormat, roomId, userId), list);
+        sessionMap.put(String.format(CommonConstants.ROOM_USER_FORMAT, roomId, userId), list);
     }
 }

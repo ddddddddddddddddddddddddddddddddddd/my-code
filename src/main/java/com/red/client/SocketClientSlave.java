@@ -1,4 +1,4 @@
-package com.melot.packet;
+package com.red.packet;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,9 +15,7 @@ import javax.websocket.WebSocketContainer;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.melot.executor.CloseSessionExecutor;
-import com.melot.executor.HandleExecutor;
-import com.melot.executor.ReapExecutor;
+import com.red.thread.CloseSessionThread;
 
 @ClientEndpoint
 public class SocketClientSlave {
@@ -35,21 +33,18 @@ public class SocketClientSlave {
             JsonObject json = (JsonObject) parser.parse(message);
             final String sendId = json.get("sendId").getAsString();
             final String roomId = json.get("roomId").getAsString();
-//            ReapExecutor.putData(roomId + "_" + sendId);
 
-
-            if (HandleExecutor.filterRed.putIfAbsent(roomId + "_" + sendId, "") != null) {
+            if (UserRoomConstants.RED_FILTER.putIfAbsent(roomId + "_" + sendId, System.currentTimeMillis() * 2 * 60000) != null) {
                 return;
             }
-            Set<Integer> idSet = HandleExecutor.userMap.keySet();
-            for (final Integer id : idSet) {
-                final String token = HandleExecutor.userMap.get(id);
-
+            Set<String> userIdSet = UserRoomConstants.UESER_TOKEN_MAP.keySet();
+            for (final String userId : userIdSet) {
+                final String token = UserRoomConstants.UESER_TOKEN_MAP.get(userId);
                 ReapExecutor.getRedPool.submit(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            Operater.getRed(id, token, sendId, Integer.parseInt(roomId));
+                            Operater.getRed(userId, token, sendId, roomId);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -69,7 +64,7 @@ public class SocketClientSlave {
         t.printStackTrace();
     }
 
-    public static void connect(int userId, int roomId, String token, String ws) throws Exception {
+    public static void connect(String userId, String roomId, String token, String ws) throws Exception {
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         Session session = container.connectToServer(SocketClientSlave.class, URI.create(ws));
         JsonObject msg = new JsonObject();
@@ -82,7 +77,7 @@ public class SocketClientSlave {
         msg.addProperty("userId", userId);
         msg.addProperty("token", token);
         session.getBasicRemote().sendText(msg.toString());
-        CloseSessionExecutor.putSession(userId, roomId, System.currentTimeMillis() + 3 * 60 * 1000, session);
+        CloseSessionThread.putSession(userId, roomId, System.currentTimeMillis() + 3 * 60 * 1000, session);
     }
 
 }

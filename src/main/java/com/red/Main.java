@@ -16,9 +16,9 @@ import java.util.Random;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.melot.constant.UserRoomConstants;
 import com.melot.executor.CloseSessionExecutor;
-import com.melot.executor.HandleExecutor;
-import com.melot.executor.ReapExecutor;
+import com.melot.executor.LoginRoomExecutor;
 import com.melot.executor.UserResidualExecutor;
 import com.melot.packet.Operater;
 import com.melot.packet.SocketClient;
@@ -29,10 +29,8 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        HandleExecutor handleExecutor = new HandleExecutor();
-        handleExecutor.execute();
-//        ReapExecutor reapExecutor = new ReapExecutor();
-//        reapExecutor.execute();
+        LoginRoomExecutor loginRoomExecutor = new LoginRoomExecutor();
+        loginRoomExecutor.execute();
         CloseSessionExecutor closeSessionExecutor = new CloseSessionExecutor();
         closeSessionExecutor.execute();
 
@@ -46,10 +44,10 @@ public class Main {
             String lineTxt = null;
             while ((lineTxt = bufferedReader.readLine()) != null) {
                 JsonObject json = parser.parse(lineTxt).getAsJsonObject();
-                int userId = json.get("userId").getAsInt();
+                String userId = json.get("userId").getAsString();
                 String up = json.get("up").getAsString();
                 String token = Operater.login(userId, up);
-                HandleExecutor.userMap.put(userId, token);
+                UserRoomConstants.UESER_TOKEN.put(userId, token);
                 System.out.println("login " + userId);
                 Thread.sleep(random.nextInt(20000) + 10000);
             }
@@ -64,15 +62,15 @@ public class Main {
             @Override
             public void run() {
                 try {
-                    int userId = 122831357;
-                    int roomId = 117366944;
+                    String userId = "122831357";
+                    String roomId = "117366944";
                     String up = "8I1J1D1212111K1D1K1I1ZPM8E1JYUJ3JYJZ1D121K7E";
                     // 获取房间socket
                     String ws = Operater.getWsByRoomId(roomId);
                     //登录
                     String token = Operater.login(userId, up);
                     SocketClient.connect(userId, roomId, token, ws);
-                    ReapExecutor.putUser(roomId, userId + "_" + token);
+//                    ReapExecutor.putUser(roomId, userId + "_" + token);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
