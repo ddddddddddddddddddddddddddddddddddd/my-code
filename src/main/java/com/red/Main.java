@@ -3,7 +3,6 @@ package com.red;
 
 import com.google.gson.JsonObject;
 import com.red.client.SocketClient;
-import com.red.constant.CommonConstants;
 import com.red.thread.ClearRedFilterThread;
 import com.red.thread.CloseSessionThread;
 import com.red.thread.LoginRoomThread;
@@ -34,7 +33,7 @@ public class Main {
                 JsonObject json = DataUtil.JSON_PARSER.parse(lineTxt).getAsJsonObject();
                 String userId = json.get("userId").getAsString();
                 String up = json.get("up").getAsString();
-                String token = OperUtil.login(userId, up, OperUtil.openConnection(CommonConstants.URL));
+                String token = OperUtil.login(userId, up);
                 DataUtil.UESER_TOKEN.put(userId, token);
                 System.out.println("login " + userId);
                 Thread.sleep(random.nextInt(20000) + 10000);
@@ -59,8 +58,8 @@ public class Main {
         String userId = "122831357";
         String roomId = "117366944";
         String up = "8I1J1D1212111K1D1K1I1ZPM8E1JYUJ3JYJZ1D121K7E";
-        String ws = OperUtil.getWsByRoomId(roomId, OperUtil.openConnection(CommonConstants.WS_URL));
-        String token = OperUtil.login(userId, up, OperUtil.openConnection(CommonConstants.URL));
+        String ws = OperUtil.getWsByRoomId(roomId);
+        String token = OperUtil.login(userId, up);
         SocketClient.connect(userId, roomId, token, ws);
 
     }

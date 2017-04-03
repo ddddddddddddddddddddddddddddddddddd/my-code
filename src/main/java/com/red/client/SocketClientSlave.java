@@ -1,7 +1,6 @@
 package com.red.client;
 
 import com.google.gson.JsonObject;
-import com.red.constant.CommonConstants;
 import com.red.util.DataUtil;
 import com.red.util.OperUtil;
 import com.red.util.PoolUtil;
@@ -36,7 +35,7 @@ public class SocketClientSlave {
                     @Override
                     public void run() {
                         try {
-                            OperUtil.getRed(userId, token, sendId, roomId, OperUtil.openConnection(CommonConstants.URL));
+                            OperUtil.getRed(userId, token, sendId, roomId);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

@@ -1,14 +1,10 @@
 package com.red.thread;
 
 import com.red.client.SocketClientSlave;
-import com.red.constant.CommonConstants;
 import com.red.util.DataUtil;
 import com.red.util.OperUtil;
 import com.red.util.PoolUtil;
 
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class LoginRoomThread extends Thread {
@@ -24,7 +20,7 @@ public class LoginRoomThread extends Thread {
                         @Override
                         public void run() {
                             try {
-                                String ws = OperUtil.getWsByRoomId(roomId, OperUtil.openConnection(CommonConstants.WS_URL));
+                                String ws = OperUtil.getWsByRoomId(roomId);
                                 SocketClientSlave.connect(id, roomId, token, ws);
                             } catch (Exception e) {
                                 e.printStackTrace();

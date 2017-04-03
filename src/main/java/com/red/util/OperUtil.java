@@ -1,6 +1,7 @@
 package com.red.util;
 
 import com.google.gson.JsonObject;
+import com.red.constant.CommonConstants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class OperUtil {
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public static void getRed(String userId, String token, String sendId, String roomId, HttpURLConnection httpConn) throws Exception {
+    public static void getRed(String userId, String token, String sendId, String roomId) throws Exception {
         JsonObject data = new JsonObject();
         data.addProperty("roomId", roomId);
         data.addProperty("sendId", sendId);
@@ -40,9 +41,7 @@ public class OperUtil {
         String sv = EncryptUtil.slist_web(map);
         data.addProperty("sv", sv);
         String para = URLEncoder.encode(data.toString(), "UTF-8");
-        httpConn.setRequestProperty("parameter", para);
-
-        httpConn.connect();
+        HttpURLConnection httpConn = openConnection(CommonConstants.URL, para);
 
         BufferedReader in = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
         String line;
@@ -64,7 +63,7 @@ public class OperUtil {
         in.close();
     }
 
-    public static String login(String userId, String up, HttpURLConnection httpConn) throws Exception {
+    public static String login(String userId, String up) throws Exception {
         JsonObject data = new JsonObject();
         data.addProperty("FuncTag", 40000015);
         data.addProperty("rc", "E52A4_" + userId);
@@ -83,9 +82,8 @@ public class OperUtil {
         String sv = EncryptUtil.slist_web(map);
         data.addProperty("sv", sv);
         String para = URLEncoder.encode(data.toString(), "UTF-8");
-        httpConn.setRequestProperty("parameter", para);
 
-        httpConn.connect();
+        HttpURLConnection httpConn = openConnection(CommonConstants.URL, para);
         BufferedReader in = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
         String line;
         String result = "";
@@ -98,11 +96,10 @@ public class OperUtil {
         return token;
     }
 
-    public static String getWsByRoomId(String roomId, HttpURLConnection httpConn) {
+    public static String getWsByRoomId(String roomId) {
         String ws = "";
         try {
-            httpConn.setRequestProperty("roomId", roomId);
-            httpConn.connect();
+            HttpURLConnection httpConn = openConnection(CommonConstants.URL, roomId);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(httpConn.getInputStream()));
             String line;
@@ -118,7 +115,7 @@ public class OperUtil {
         return ws;
     }
 
-    public static int getUserInfo(String userId, String token, HttpURLConnection httpConn) {
+    public static int getUserInfo(String userId, String token) {
         int amount = 0;
         try {
             JsonObject data = new JsonObject();
@@ -130,8 +127,7 @@ public class OperUtil {
             data.addProperty("c", 100101);
 
             String para = URLEncoder.encode(data.toString(), "UTF-8");
-            httpConn.setRequestProperty("parameter", para);
-            httpConn.connect();
+            HttpURLConnection httpConn = openConnection(CommonConstants.URL, para);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
             String line;
@@ -150,8 +146,8 @@ public class OperUtil {
         return amount;
     }
 
-    public static HttpURLConnection openConnection(String urlAddr) throws IOException {
-        URL url = new URL(urlAddr);
+    public static HttpURLConnection openConnection(String urlAddr, String param) throws IOException {
+        URL url = new URL(String.format(urlAddr, param));
         HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
         httpConn.setDoOutput(true);
         httpConn.setDoInput(true);
@@ -162,7 +158,7 @@ public class OperUtil {
         httpConn.setRequestProperty("Connection", "Keep-Alive");
         httpConn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
         httpConn.setRequestProperty("Charset", "UTF-8");
-        System.out.println("slave http open ...");
+        httpConn.connect();
         return httpConn;
     }
 }
