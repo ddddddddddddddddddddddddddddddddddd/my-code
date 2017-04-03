@@ -35,8 +35,6 @@ public class Main {
         reapExecutor.execute();
         CloseSessionExecutor closeSessionExecutor = new CloseSessionExecutor();
         closeSessionExecutor.execute();
-        UserResidualExecutor userResidualExecutor = new UserResidualExecutor();
-        userResidualExecutor.execute();
 
         File file = new File(Main.class.getResource("/").getPath() + "user.conf");
         System.out.println(Main.class.getResource("/").getPath() + "user.conf");
@@ -57,6 +55,10 @@ public class Main {
             }
             read.close();
         }
+
+
+        UserResidualExecutor userResidualExecutor = new UserResidualExecutor();
+        userResidualExecutor.execute();
 
         Thread t = new Thread(new Runnable() {
             @Override
