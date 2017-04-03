@@ -99,7 +99,7 @@ public class OperUtil {
     public static String getWsByRoomId(String roomId) {
         String ws = "";
         try {
-            HttpURLConnection httpConn = openConnection(CommonConstants.URL, roomId);
+            HttpURLConnection httpConn = openConnection(CommonConstants.WS_URL, roomId);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(httpConn.getInputStream()));
             String line;
