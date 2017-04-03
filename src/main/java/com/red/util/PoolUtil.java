@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
  */
 public class PoolUtil {
 
-    public static ExecutorService ROOM_THREAD_POOL = Executors.newFixedThreadPool(20);
+    public static ExecutorService ROOM_WS_POOL = Executors.newFixedThreadPool(20);
 
     public static Executor RED_THREAD_POOL = Executors.newFixedThreadPool(20);
 

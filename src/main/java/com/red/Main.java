@@ -2,8 +2,8 @@
 package com.red;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.red.client.SocketClient;
+import com.red.constant.CommonConstants;
 import com.red.thread.ClearRedFilterThread;
 import com.red.thread.CloseSessionThread;
 import com.red.thread.LoginRoomThread;
@@ -19,8 +19,6 @@ import java.util.Random;
 
 public class Main {
 
-    private static JsonParser parser = new JsonParser();
-
     public static void main(String[] args) throws Exception {
 
         //副账户
@@ -33,10 +31,10 @@ public class Main {
             BufferedReader bufferedReader = new BufferedReader(read);
             String lineTxt = null;
             while ((lineTxt = bufferedReader.readLine()) != null) {
-                JsonObject json = parser.parse(lineTxt).getAsJsonObject();
+                JsonObject json = DataUtil.JSON_PARSER.parse(lineTxt).getAsJsonObject();
                 String userId = json.get("userId").getAsString();
                 String up = json.get("up").getAsString();
-                String token = OperUtil.login(userId, up);
+                String token = OperUtil.login(userId, up, OperUtil.openConnection(CommonConstants.URL));
                 DataUtil.UESER_TOKEN.put(userId, token);
                 System.out.println("login " + userId);
                 Thread.sleep(random.nextInt(20000) + 10000);
@@ -61,8 +59,8 @@ public class Main {
         String userId = "122831357";
         String roomId = "117366944";
         String up = "8I1J1D1212111K1D1K1I1ZPM8E1JYUJ3JYJZ1D121K7E";
-        String ws = OperUtil.getWsByRoomId(roomId);
-        String token = OperUtil.login(userId, up);
+        String ws = OperUtil.getWsByRoomId(roomId, OperUtil.openConnection(CommonConstants.WS_URL));
+        String token = OperUtil.login(userId, up, OperUtil.openConnection(CommonConstants.URL));
         SocketClient.connect(userId, roomId, token, ws);
 
     }

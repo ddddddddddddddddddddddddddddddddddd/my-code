@@ -2,7 +2,6 @@ package com.red.client;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.red.util.DataUtil;
 
 import javax.websocket.*;
@@ -11,8 +10,6 @@ import java.net.URI;
 
 @ClientEndpoint
 public class SocketClient extends Thread {
-
-    private JsonParser parser = new JsonParser();
 
     @OnOpen
     public void onOpen(Session session) {
@@ -23,7 +20,7 @@ public class SocketClient extends Thread {
     public void onMessage(String message) throws Exception {
         try {
             if (message.contains("红包")) {
-                JsonObject json = (JsonObject) parser.parse(message);
+                JsonObject json = (JsonObject) DataUtil.JSON_PARSER.parse(message);
                 JsonArray array = json.get("MsgList").getAsJsonArray();
                 JsonObject obj = (JsonObject) array.get(0);
                 String roomId = obj.get("roomId").getAsString();

@@ -1,5 +1,6 @@
 package com.red.thread;
 
+import com.red.constant.CommonConstants;
 import com.red.util.DataUtil;
 import com.red.util.OperUtil;
 
@@ -27,7 +28,7 @@ public class UserInfoThread {
                         while (it.hasNext()) {
                             String userId = it.next();
                             String token = userMap.get(userId);
-                            int amount = OperUtil.getUserInfo(userId, token);
+                            int amount = OperUtil.getUserInfo(userId, token, OperUtil.openConnection(CommonConstants.URL));
                             System.out.println(userId + " has money: " + amount / 1000);
                             totalAmount += amount;
                             Thread.sleep(5000L);

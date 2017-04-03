@@ -1,9 +1,9 @@
 package com.red.util;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -15,56 +15,9 @@ import java.util.Map;
 
 public class OperUtil {
 
-    private static JsonParser parser = new JsonParser();
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public static String login(String userId, String up) throws Exception {
-        String url = "https://sapi.kktv1.com/meShow/entrance";
-        JsonObject data = new JsonObject();
-        data.addProperty("FuncTag", 40000015);
-        data.addProperty("rc", "E52A4_" + userId);
-        data.addProperty("up", up);
-        data.addProperty("platform", 1);
-        data.addProperty("a", 2);
-        data.addProperty("c", 100101);
-
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("FuncTag", 40000015);
-        map.put("rc", "E52A4_" + userId);
-        map.put("up", up);
-        map.put("platform", 1);
-        map.put("a", 2);
-        map.put("c", 100101);
-        String sv = EncryptUtil.slist_web(map);
-        data.addProperty("sv", sv);
-        String para = URLEncoder.encode(data.toString(), "UTF-8");
-        url = url + "?parameter=" + para;
-        URL U = new URL(url);
-        HttpURLConnection httpConn = (HttpURLConnection) U.openConnection();
-        httpConn.setDoOutput(true);
-        httpConn.setDoInput(true);
-        httpConn.setUseCaches(false);
-        httpConn.setRequestMethod("GET");
-        // 设置请求属性
-        httpConn.setRequestProperty("Content-Type", "application/octet-stream");
-        httpConn.setRequestProperty("Connection", "Keep-Alive");
-        httpConn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-        httpConn.setRequestProperty("Charset", "UTF-8");
-        httpConn.connect();
-        BufferedReader in = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
-        String line;
-        String result = "";
-        while ((line = in.readLine()) != null) {
-            result += line;
-        }
-        JsonObject json = (JsonObject) parser.parse(result);
-        String token = json.get("token").getAsString();
-        in.close();
-        return token;
-    }
-
-    public static void getRed(String userId, String token, String sendId, String roomId) throws Exception {
-        String url = "https://sapi.kktv1.com/meShow/entrance";
+    public static void getRed(String userId, String token, String sendId, String roomId, HttpURLConnection httpConn) throws Exception {
         JsonObject data = new JsonObject();
         data.addProperty("roomId", roomId);
         data.addProperty("sendId", sendId);
@@ -87,18 +40,8 @@ public class OperUtil {
         String sv = EncryptUtil.slist_web(map);
         data.addProperty("sv", sv);
         String para = URLEncoder.encode(data.toString(), "UTF-8");
-        url = url + "?parameter=" + para;
-        URL U = new URL(url);
-        HttpURLConnection httpConn = (HttpURLConnection) U.openConnection();
-        httpConn.setDoOutput(true);// 使用 URL 连接进行输出
-        httpConn.setDoInput(true);// 使用 URL 连接进行输入
-        httpConn.setUseCaches(false);// 忽略缓存
-        httpConn.setRequestMethod("GET");// 设置URL请求方法
+        httpConn.setRequestProperty("parameter", para);
 
-        // 设置请求属性
-        httpConn.setRequestProperty("Content-Type", "application/octet-stream");
-        httpConn.setRequestProperty("Connection", "Keep-Alive");// 维持长连接
-        httpConn.setRequestProperty("Charset", "UTF-8");
         httpConn.connect();
 
         BufferedReader in = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
@@ -107,7 +50,7 @@ public class OperUtil {
         while ((line = in.readLine()) != null) {
             result += line;
         }
-        JsonObject json = (JsonObject) parser.parse(result);
+        JsonObject json = (JsonObject) DataUtil.JSON_PARSER.parse(result);
         String amount = "0";
         try {
             amount = json.get("getAmount").toString();
@@ -117,25 +60,48 @@ public class OperUtil {
 
         System.out.println(amount + " " + sendId + " " +
                 roomId + " " + sdf.format(new Date(System.currentTimeMillis())) + " " + userId);
-//		StatisticsExecutor.putData(json);
 
         in.close();
     }
 
-    public static String getWsByRoomId(String roomId) {
+    public static String login(String userId, String up, HttpURLConnection httpConn) throws Exception {
+        JsonObject data = new JsonObject();
+        data.addProperty("FuncTag", 40000015);
+        data.addProperty("rc", "E52A4_" + userId);
+        data.addProperty("up", up);
+        data.addProperty("platform", 1);
+        data.addProperty("a", 2);
+        data.addProperty("c", 100101);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("FuncTag", 40000015);
+        map.put("rc", "E52A4_" + userId);
+        map.put("up", up);
+        map.put("platform", 1);
+        map.put("a", 2);
+        map.put("c", 100101);
+        String sv = EncryptUtil.slist_web(map);
+        data.addProperty("sv", sv);
+        String para = URLEncoder.encode(data.toString(), "UTF-8");
+        httpConn.setRequestProperty("parameter", para);
+
+        httpConn.connect();
+        BufferedReader in = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
+        String line;
+        String result = "";
+        while ((line = in.readLine()) != null) {
+            result += line;
+        }
+        JsonObject json = (JsonObject) DataUtil.JSON_PARSER.parse(result);
+        String token = json.get("token").getAsString();
+        in.close();
+        return token;
+    }
+
+    public static String getWsByRoomId(String roomId, HttpURLConnection httpConn) {
         String ws = "";
         try {
-            String url = "http://into1.kktv8.com/?roomId=" + roomId;
-            URL U = new URL(url);
-            HttpURLConnection httpConn = (HttpURLConnection) U.openConnection();
-            httpConn.setDoOutput(true);// 使用 URL 连接进行输出
-            httpConn.setDoInput(true);// 使用 URL 连接进行输入
-            httpConn.setUseCaches(false);// 忽略缓存
-            httpConn.setRequestMethod("GET");// 设置URL请求方法
-            // 设置请求属性
-            httpConn.setRequestProperty("Content-Type", "application/octet-stream");
-            httpConn.setRequestProperty("Connection", "Keep-Alive");// 维持长连接
-            httpConn.setRequestProperty("Charset", "UTF-8");
+            httpConn.setRequestProperty("roomId", roomId);
             httpConn.connect();
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(httpConn.getInputStream()));
@@ -144,7 +110,7 @@ public class OperUtil {
             while ((line = in.readLine()) != null) {
                 result += line;
             }
-            JsonObject obj = (JsonObject) parser.parse(result);
+            JsonObject obj = (JsonObject) DataUtil.JSON_PARSER.parse(result);
             ws = obj.get("ws").getAsString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,10 +118,9 @@ public class OperUtil {
         return ws;
     }
 
-    public static int getUserInfo(String userId, String token) {
+    public static int getUserInfo(String userId, String token, HttpURLConnection httpConn) {
         int amount = 0;
         try {
-            String url = "https://sapi.kktv1.com/meShow/entrance";
             JsonObject data = new JsonObject();
             data.addProperty("FuncTag", 10005001);
             data.addProperty("userId", userId);
@@ -165,17 +130,7 @@ public class OperUtil {
             data.addProperty("c", 100101);
 
             String para = URLEncoder.encode(data.toString(), "UTF-8");
-            url = url + "?parameter=" + para;
-            URL U = new URL(url);
-            HttpURLConnection httpConn = (HttpURLConnection) U.openConnection();
-            httpConn.setDoOutput(true);// 使用 URL 连接进行输出
-            httpConn.setDoInput(true);// 使用 URL 连接进行输入
-            httpConn.setUseCaches(false);// 忽略缓存
-            httpConn.setRequestMethod("GET");// 设置URL请求方法
-            // 设置请求属性
-            httpConn.setRequestProperty("Content-Type", "application/octet-stream");
-            httpConn.setRequestProperty("Connection", "Keep-Alive");// 维持长连接
-            httpConn.setRequestProperty("Charset", "UTF-8");
+            httpConn.setRequestProperty("parameter", para);
             httpConn.connect();
 
             BufferedReader in = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
@@ -184,7 +139,7 @@ public class OperUtil {
             while ((line = in.readLine()) != null) {
                 result += line;
             }
-            JsonObject json = (JsonObject) parser.parse(result);
+            JsonObject json = (JsonObject) DataUtil.JSON_PARSER.parse(result);
 
             if (json.get("money") != null) {
                 amount = json.get("money").getAsInt();
@@ -193,5 +148,21 @@ public class OperUtil {
 
         }
         return amount;
+    }
+
+    public static HttpURLConnection openConnection(String urlAddr) throws IOException {
+        URL url = new URL(urlAddr);
+        HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+        httpConn.setDoOutput(true);
+        httpConn.setDoInput(true);
+        httpConn.setUseCaches(false);
+        httpConn.setRequestMethod("GET");
+        // 设置请求属性
+        httpConn.setRequestProperty("Content-Type", "application/octet-stream");
+        httpConn.setRequestProperty("Connection", "Keep-Alive");
+        httpConn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+        httpConn.setRequestProperty("Charset", "UTF-8");
+        System.out.println("slave http open ...");
+        return httpConn;
     }
 }

@@ -1,7 +1,7 @@
 package com.red.client;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.red.constant.CommonConstants;
 import com.red.util.DataUtil;
 import com.red.util.OperUtil;
 import com.red.util.PoolUtil;
@@ -14,8 +14,6 @@ import java.util.Set;
 @ClientEndpoint
 public class SocketClientSlave {
 
-    JsonParser parser = new JsonParser();
-
     @OnOpen
     public void onOpen(Session session) {
         System.out.println("slave open....");
@@ -24,11 +22,11 @@ public class SocketClientSlave {
     @OnMessage
     public void onMessage(String message) throws Exception {
         if (message.contains("sendId")) {
-            JsonObject json = (JsonObject) parser.parse(message);
+            JsonObject json = (JsonObject) DataUtil.JSON_PARSER.parse(message);
             final String sendId = json.get("sendId").getAsString();
             final String roomId = json.get("roomId").getAsString();
 
-            if (DataUtil.RED_FILTER.putIfAbsent(roomId + "_" + sendId, System.currentTimeMillis() * 2 * 60000) != null) {
+            if (DataUtil.RED_FILTER.putIfAbsent(roomId + "_" + sendId, System.currentTimeMillis() + 2 * 60000) != null) {
                 return;
             }
             Set<String> userIdSet = DataUtil.UESER_TOKEN.keySet();
@@ -38,7 +36,7 @@ public class SocketClientSlave {
                     @Override
                     public void run() {
                         try {
-                            OperUtil.getRed(userId, token, sendId, roomId);
+                            OperUtil.getRed(userId, token, sendId, roomId, OperUtil.openConnection(CommonConstants.URL));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
