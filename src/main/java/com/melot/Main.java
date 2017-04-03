@@ -31,8 +31,8 @@ public class Main {
 
         HandleExecutor handleExecutor = new HandleExecutor();
         handleExecutor.execute();
-        ReapExecutor reapExecutor = new ReapExecutor();
-        reapExecutor.execute();
+//        ReapExecutor reapExecutor = new ReapExecutor();
+//        reapExecutor.execute();
         CloseSessionExecutor closeSessionExecutor = new CloseSessionExecutor();
         closeSessionExecutor.execute();
 
