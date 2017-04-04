@@ -63,7 +63,7 @@ public class SimpleSocketClientSlave {
         msg.addProperty("userId", userId);
         msg.addProperty("token", token);
         session.getBasicRemote().sendText(msg.toString());
-        DataUtil.putSession(userId, roomId, System.currentTimeMillis() + 3 * 60 * 1000, session);
+        DataUtil.putSession(userId, roomId, System.currentTimeMillis() + 10 * 60 * 1000, session);
     }
 
 }
