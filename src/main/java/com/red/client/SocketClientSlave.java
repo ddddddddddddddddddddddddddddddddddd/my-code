@@ -28,19 +28,29 @@ public class SocketClientSlave {
             if (DataUtil.RED_FILTER.putIfAbsent(roomId + "_" + sendId, System.currentTimeMillis() + 2 * 60000) != null) {
                 return;
             }
+            int count = 0;
             Set<String> userIdSet = DataUtil.UESER_TOKEN.keySet();
             for (final String userId : userIdSet) {
                 final String token = DataUtil.UESER_TOKEN.get(userId);
-                PoolUtil.RED_THREAD_POOL.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            OperUtil.getRed(userId, token, sendId, roomId);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                if (count > 1) {
+                    try {
+                        OperUtil.getRed(userId, token, sendId, roomId);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                });
+                } else {
+                    PoolUtil.RED_THREAD_POOL.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                OperUtil.getRed(userId, token, sendId, roomId);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+                count += 1;
             }
         }
     }

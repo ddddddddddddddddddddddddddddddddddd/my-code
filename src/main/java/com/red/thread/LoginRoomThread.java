@@ -22,8 +22,8 @@ public class LoginRoomThread extends Thread {
                         public void run() {
                             try {
                                 String ws = OperUtil.getWsByRoomId(roomId);
-//                                SocketClientSlave.connect(id, roomId, token, ws);
-                                SimpleSocketClientSlave.connect(id, roomId, token, ws);
+                                SocketClientSlave.connect(id, roomId, token, ws);
+//                                SimpleSocketClientSlave.connect(id, roomId, token, ws);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
