@@ -1,5 +1,6 @@
 package com.red.thread;
 
+import com.red.client.SimpleSocketClientSlave;
 import com.red.client.SocketClientSlave;
 import com.red.util.DataUtil;
 import com.red.util.OperUtil;
@@ -21,7 +22,8 @@ public class LoginRoomThread extends Thread {
                         public void run() {
                             try {
                                 String ws = OperUtil.getWsByRoomId(roomId);
-                                SocketClientSlave.connect(id, roomId, token, ws);
+//                                SocketClientSlave.connect(id, roomId, token, ws);
+                                SimpleSocketClientSlave.connect(id, roomId, token, ws);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
